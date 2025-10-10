@@ -1,46 +1,83 @@
-site_name: Easy IDP Documentation
+site_name: Easy IDP
+site_description: GitOps-native Internal Developer Platform
 site_url: https://buckinghamio.github.io/easy-idp-docs/
 repo_url: https://github.com/BuckinghamIO/easy-idp
-repo_name: easy-idp
+repo_name: BuckinghamIO/easy-idp
 edit_uri: https://github.com/BuckinghamIO/easy-idp-docs/edit/main/docs/
 
 theme:
   name: material
+  language: en
   palette:
     # Light mode
-    - scheme: default
-      primary: indigo
-      accent: indigo
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: blue
+      accent: light blue
       toggle:
-        icon: material/brightness-7
+        icon: material/weather-night
         name: Switch to dark mode
     # Dark mode
-    - scheme: slate
-      primary: indigo
-      accent: indigo
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: blue
+      accent: light blue
       toggle:
-        icon: material/brightness-4
+        icon: material/weather-sunny
         name: Switch to light mode
+  font:
+    text: Inter
+    code: Roboto Mono
   features:
+    # Navigation
+    - navigation.instant
+    - navigation.tracking
     - navigation.tabs
+    - navigation.tabs.sticky
     - navigation.sections
     - navigation.expand
+    - navigation.path
+    - navigation.indexes
     - navigation.top
+    - navigation.footer
+    # Search
     - search.suggest
     - search.highlight
+    - search.share
+    # Table of contents
+    - toc.follow
+    - toc.integrate
+    # Content
     - content.code.copy
+    - content.code.annotate
     - content.action.edit
+    - content.action.view
+    - content.tabs.link
   icon:
     repo: fontawesome/brands/github
+    edit: material/pencil
+    view: material/eye
+    logo: material/rocket-launch
+  # Uncomment when you have custom logo/favicon:
+  # logo: assets/logo.svg
+  # favicon: assets/favicon.png
 
 plugins:
   - search
 
 extra:
+  homepage: https://buckinghamio.github.io/easy-idp-docs/
   social:
     - icon: fontawesome/brands/github
       link: https://github.com/BuckinghamIO/easy-idp
       name: Easy IDP on GitHub
+    - icon: fontawesome/brands/docker
+      link: https://hub.docker.com/r/buckinghamio/easy-idp
+      name: Docker Hub
+  generator: false
+  
+extra_css:
+  - stylesheets/extra.css
 
 nav:
   - Home: index.md
