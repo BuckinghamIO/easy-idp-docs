@@ -51,15 +51,65 @@
       "type": "object",
       "required": ["steps"],
       "properties": {
+        "name": {
+          "type": "string",
+          "description": "Workflow name (current format, matches metadata.name)"
+        },
+        
         "displayName": {
           "type": "string",
-          "description": "Human-readable workflow name"
+          "description": "Human-readable workflow name (future format)"
         },
         
         "description": {
           "type": "string",
-          "maxLength": 500,
           "description": "Brief description of what this workflow does"
+        },
+        
+        "version": {
+          "type": "string",
+          "description": "Workflow version"
+        },
+        
+        "tags": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Workflow tags for categorization"
+        },
+        
+        "form_schema": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "type"],
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Field name"
+              },
+              "label": {
+                "type": "string",
+                "description": "Human-readable label"
+              },
+              "type": {
+                "type": "string",
+                "enum": ["text", "textarea", "number", "boolean", "choice"],
+                "description": "Input type"
+              },
+              "required": {
+                "type": "boolean",
+                "default": false
+              },
+              "default": {
+                "description": "Default value"
+              },
+              "description": {
+                "type": "string",
+                "description": "Field description/help text"
+              }
+            }
+          },
+          "description": "Form fields for user input (current format)"
         },
         
         "parameters": {
@@ -96,7 +146,13 @@
               }
             }
           },
-          "description": "Input parameters for this workflow"
+          "description": "Input parameters for this workflow (future format)"
+        },
+        
+        "credential_aliases": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Required credential names"
         },
         
         "steps": {
@@ -114,10 +170,19 @@
                 "type": "string",
                 "description": "Action to execute (e.g., git.checkout, docker.build)"
               },
+              "config": {
+                "type": "object",
+                "additionalProperties": true,
+                "description": "Parameters for the action (current format)"
+              },
               "with": {
                 "type": "object",
                 "additionalProperties": true,
-                "description": "Parameters for the action"
+                "description": "Parameters for the action (future format)"
+              },
+              "register": {
+                "type": "string",
+                "description": "Variable name to store step output"
               },
               "condition": {
                 "type": "string",
@@ -126,12 +191,6 @@
             }
           },
           "description": "Workflow steps to execute in order"
-        },
-        
-        "tags": {
-          "type": "array",
-          "items": {"type": "string"},
-          "description": "Searchable tags"
         }
       },
       "additionalProperties": true

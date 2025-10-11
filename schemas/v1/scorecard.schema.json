@@ -51,15 +51,35 @@
       "type": "object",
       "required": ["checks"],
       "properties": {
+        "name": {
+          "type": "string",
+          "description": "Scorecard name (current format, matches metadata.name)"
+        },
+        
+        "version": {
+          "type": "string",
+          "description": "Scorecard version"
+        },
+        
+        "title": {
+          "type": "string",
+          "description": "Human-readable scorecard title (current format)"
+        },
+        
         "displayName": {
           "type": "string",
-          "description": "Human-readable scorecard name"
+          "description": "Human-readable scorecard name (future format)"
         },
         
         "description": {
           "type": "string",
-          "maxLength": 500,
           "description": "Brief description of what this scorecard evaluates"
+        },
+        
+        "applies_to": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Resource types this scorecard applies to (current format: ['service', 'library'])"
         },
         
         "appliesTo": {
@@ -79,7 +99,7 @@
               }
             }
           },
-          "description": "Which resources this scorecard applies to"
+          "description": "Which resources this scorecard applies to (future format)"
         },
         
         "checks": {
@@ -87,21 +107,41 @@
           "minItems": 1,
           "items": {
             "type": "object",
-            "required": ["name", "rule"],
             "properties": {
+              "id": {
+                "type": "string",
+                "description": "Check identifier (current format)"
+              },
               "name": {
                 "type": "string",
-                "description": "Check identifier"
+                "description": "Check identifier (future format)"
+              },
+              "title": {
+                "type": "string",
+                "description": "Human-readable check title"
               },
               "description": {
                 "type": "string",
-                "description": "Human-readable check description"
+                "description": "Detailed check description"
               },
               "weight": {
                 "type": "number",
                 "minimum": 0,
                 "default": 1,
                 "description": "Weight of this check in total score"
+              },
+              "category": {
+                "type": "string",
+                "description": "Check category (reliability, security, documentation, etc.)"
+              },
+              "check_type": {
+                "type": "string",
+                "description": "Check implementation type (http, github, metadata, link, etc.)"
+              },
+              "config": {
+                "type": "object",
+                "additionalProperties": true,
+                "description": "Check-specific configuration"
               },
               "rule": {
                 "type": "object",
@@ -120,11 +160,33 @@
                     "description": "Value to compare against (for operators that need it)"
                   }
                 },
-                "description": "Rule to evaluate"
+                "description": "Rule to evaluate (future format)"
               }
             }
           },
           "description": "Checks to evaluate"
+        },
+        
+        "levels": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "score": {
+                "type": "number",
+                "description": "Minimum score for this level"
+              },
+              "title": {
+                "type": "string",
+                "description": "Level title"
+              },
+              "description": {
+                "type": "string",
+                "description": "Level description"
+              }
+            }
+          },
+          "description": "Maturity levels (current format: bronze, silver, gold)"
         },
         
         "scoring": {
@@ -152,7 +214,7 @@
               }
             }
           },
-          "description": "Scoring configuration"
+          "description": "Scoring configuration (future format)"
         }
       },
       "additionalProperties": true
