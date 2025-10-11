@@ -49,11 +49,15 @@
     
     "spec": {
       "type": "object",
-      "required": ["displayName"],
       "properties": {
         "displayName": {
           "type": "string",
-          "description": "Human-readable team name"
+          "description": "Human-readable team name (camelCase)"
+        },
+        
+        "display_name": {
+          "type": "string",
+          "description": "Human-readable team name (snake_case, current format)"
         },
         
         "description": {
@@ -62,30 +66,46 @@
           "description": "Brief description of the team's purpose"
         },
         
+        "type": {
+          "type": "string",
+          "const": "team",
+          "description": "Resource type identifier"
+        },
+        
         "members": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "required": ["username"],
-            "properties": {
-              "username": {
-                "type": "string",
-                "format": "email",
-                "description": "User email"
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {"type": "string"},
+              "description": "Team members (simple email list)"
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["username"],
+                "properties": {
+                  "username": {
+                    "type": "string",
+                    "format": "email",
+                    "description": "User email"
+                  },
+                  "role": {
+                    "type": "string",
+                    "enum": ["lead", "member"],
+                    "default": "member",
+                    "description": "Team role"
+                  },
+                  "since": {
+                    "type": "string",
+                    "format": "date",
+                    "description": "Date joined team (YYYY-MM-DD)"
+                  }
+                }
               },
-              "role": {
-                "type": "string",
-                "enum": ["lead", "member"],
-                "default": "member",
-                "description": "Team role"
-              },
-              "since": {
-                "type": "string",
-                "format": "date",
-                "description": "Date joined team (YYYY-MM-DD)"
-              }
+              "description": "Team members (structured format with roles)"
             }
-          },
+          ],
           "description": "Team members"
         },
         
@@ -94,8 +114,7 @@
           "properties": {
             "slack": {
               "type": "string",
-              "pattern": "^#[a-z0-9-]+$",
-              "description": "Slack channel (e.g., #team-platform)"
+              "description": "Slack channel (e.g., #team-platform or team-platform)"
             },
             "email": {
               "type": "string",
@@ -117,6 +136,12 @@
             "format": "uri"
           },
           "description": "Links to team resources (wiki, jira, calendar, etc.)"
+        },
+        
+        "services": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Services owned by this team (auto-populated)"
         }
       },
       "additionalProperties": true
