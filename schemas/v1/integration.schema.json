@@ -1,0 +1,108 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schemas.easy-idp.com/v1/integration.schema.json",
+  "title": "Integration",
+  "description": "An external service integration",
+  "type": "object",
+  
+  "required": ["apiVersion", "kind", "metadata", "spec"],
+  
+  "properties": {
+    "apiVersion": {
+      "type": "string",
+      "enum": ["idp.buckingham.io/v1"],
+      "description": "API version of this resource"
+    },
+    
+    "kind": {
+      "type": "string",
+      "const": "Integration",
+      "description": "Resource type"
+    },
+    
+    "metadata": {
+      "type": "object",
+      "required": ["name"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "pattern": "^[a-z0-9-]+$",
+          "minLength": 1,
+          "maxLength": 63,
+          "description": "Integration identifier (e.g., github, datadog)"
+        },
+        
+        "labels": {
+          "type": "object",
+          "additionalProperties": {"type": "string"},
+          "description": "Key-value labels for filtering"
+        },
+        
+        "annotations": {
+          "type": "object",
+          "additionalProperties": {"type": "string"},
+          "description": "Non-identifying metadata"
+        }
+      },
+      "additionalProperties": false
+    },
+    
+    "spec": {
+      "type": "object",
+      "required": ["type", "enabled"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Integration name (current format, matches metadata.name)"
+        },
+        
+        "type": {
+          "type": "string",
+          "enum": ["github", "monitoring", "code_quality", "dns_cdn", "cicd", "secrets", "cloud", "custom"],
+          "description": "Integration type/category"
+        },
+        
+        "enabled": {
+          "type": "boolean",
+          "description": "Whether this integration is active"
+        },
+        
+        "config": {
+          "type": "object",
+          "additionalProperties": true,
+          "description": "Integration-specific configuration"
+        },
+        
+        "credentials": {
+          "type": "object",
+          "additionalProperties": {"type": "string"},
+          "description": "Encrypted credentials (managed by SOPS)"
+        },
+        
+        "metadata": {
+          "type": "object",
+          "properties": {
+            "description": {
+              "type": "string",
+              "description": "Integration description"
+            },
+            "use_cases": {
+              "type": "array",
+              "items": {"type": "string"},
+              "description": "Common use cases for this integration"
+            },
+            "documentation_url": {
+              "type": "string",
+              "format": "uri",
+              "description": "Link to integration documentation"
+            }
+          },
+          "description": "Integration metadata and documentation"
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  
+  "additionalProperties": false
+}
