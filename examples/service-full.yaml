@@ -1,0 +1,66 @@
+# yaml-language-server: $schema=https://schemas.easy-idp.com/v1/service.schema.json
+---
+apiVersion: idp.buckingham.io/v1
+kind: Service
+
+metadata:
+  name: payment-api
+  namespace: default
+  labels:
+    env: production
+    criticality: high
+    language: python
+    team: payment
+  annotations:
+    docs.url: https://docs.company.com/payment-api
+    oncall.rotation: payment-weekly
+    cost.center: engineering
+
+spec:
+  type: service
+  description: Payment processing API with Stripe integration
+  
+  # Ownership (Multi-team example)
+  owner: PaymentTeam
+  teams:
+    - payment-team      # Primary owner
+    - platform-team     # Platform support
+    - data-team         # Analytics access
+  primaryTeam: payment-team  # On-call responsibility
+  
+  # Lifecycle
+  lifecycle: production
+  
+  # Source code
+  repository:
+    url: https://github.com/company/payment-api
+    defaultBranch: main
+    private: true
+  
+  # Dependencies
+  dependsOn:
+    - kind: Service
+      name: postgres-primary
+    - kind: Service
+      name: redis-cache
+    - kind: Service
+      name: auth-service
+  
+  # Links to external resources
+  links:
+    dashboard: https://grafana.company.com/d/payment-api
+    docs: https://docs.company.com/payment-api
+    runbook: https://wiki.company.com/runbooks/payment-api
+    logs: https://logs.company.com/payment-api
+    slack: "#team-payment"
+    repository: https://github.com/company/payment-api
+    metrics: https://datadog.company.com/dashboard/payment-api
+  
+  # Metadata
+  tags:
+    - api
+    - payment
+    - stripe
+    - pci-compliant
+  language: Python
+  framework: FastAPI

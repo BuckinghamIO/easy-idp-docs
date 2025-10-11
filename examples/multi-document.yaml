@@ -1,0 +1,80 @@
+# Example: Multiple resources in one file (separated by ---)
+# This is useful for logically related resources
+
+# Create a new team
+---
+apiVersion: idp.buckingham.io/v1
+kind: Team
+
+metadata:
+  name: mobile-team
+
+spec:
+  displayName: Mobile Team
+  description: iOS and Android development
+  
+  members:
+    - username: alice@company.com
+      role: lead
+  
+  contacts:
+    slack: "#team-mobile"
+    email: mobile@company.com
+
+# Create their first service
+---
+apiVersion: idp.buckingham.io/v1
+kind: Service
+
+metadata:
+  name: mobile-api
+  labels:
+    team: mobile
+
+spec:
+  type: service
+  description: Backend API for mobile apps
+  
+  owner: MobileTeam
+  teams:
+    - mobile-team
+  primaryTeam: mobile-team
+  
+  lifecycle: development
+  
+  repository:
+    url: https://github.com/company/mobile-api
+  
+  tags:
+    - api
+    - mobile
+  language: Go
+
+# Create a workflow for the team
+---
+apiVersion: idp.buckingham.io/v1
+kind: Workflow
+
+metadata:
+  name: deploy-mobile-api
+
+spec:
+  displayName: Deploy Mobile API
+  description: Deploy the mobile API to production
+  
+  parameters:
+    - name: environment
+      type: choice
+      options: [dev, staging, prod]
+      required: true
+  
+  steps:
+    - name: build
+      action: docker.build
+      with:
+        service: mobile-api
+    
+    - name: deploy
+      action: kubernetes.apply
+      with:
+        environment: "{{ inputs.environment }}"

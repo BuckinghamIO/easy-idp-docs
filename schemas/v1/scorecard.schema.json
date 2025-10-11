@@ -1,0 +1,163 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schemas.easy-idp.com/v1/scorecard.schema.json",
+  "title": "Scorecard",
+  "description": "A quality scorecard for evaluating services",
+  "type": "object",
+  
+  "required": ["apiVersion", "kind", "metadata", "spec"],
+  
+  "properties": {
+    "apiVersion": {
+      "type": "string",
+      "enum": ["idp.buckingham.io/v1"],
+      "description": "API version of this resource"
+    },
+    
+    "kind": {
+      "type": "string",
+      "const": "Scorecard",
+      "description": "Resource type"
+    },
+    
+    "metadata": {
+      "type": "object",
+      "required": ["name"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "pattern": "^[a-z0-9-]+$",
+          "minLength": 1,
+          "maxLength": 63,
+          "description": "Scorecard identifier (lowercase-with-hyphens)"
+        },
+        
+        "labels": {
+          "type": "object",
+          "additionalProperties": {"type": "string"},
+          "description": "Key-value labels for filtering"
+        },
+        
+        "annotations": {
+          "type": "object",
+          "additionalProperties": {"type": "string"},
+          "description": "Non-identifying metadata"
+        }
+      },
+      "additionalProperties": false
+    },
+    
+    "spec": {
+      "type": "object",
+      "required": ["checks"],
+      "properties": {
+        "displayName": {
+          "type": "string",
+          "description": "Human-readable scorecard name"
+        },
+        
+        "description": {
+          "type": "string",
+          "maxLength": 500,
+          "description": "Brief description of what this scorecard evaluates"
+        },
+        
+        "appliesTo": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["kind"],
+            "properties": {
+              "kind": {
+                "type": "string",
+                "description": "Resource kind this scorecard applies to"
+              },
+              "filter": {
+                "type": "object",
+                "additionalProperties": true,
+                "description": "Optional filters to select resources"
+              }
+            }
+          },
+          "description": "Which resources this scorecard applies to"
+        },
+        
+        "checks": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["name", "rule"],
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Check identifier"
+              },
+              "description": {
+                "type": "string",
+                "description": "Human-readable check description"
+              },
+              "weight": {
+                "type": "number",
+                "minimum": 0,
+                "default": 1,
+                "description": "Weight of this check in total score"
+              },
+              "rule": {
+                "type": "object",
+                "required": ["field", "operator"],
+                "properties": {
+                  "field": {
+                    "type": "string",
+                    "description": "Field to check (e.g., spec.owner)"
+                  },
+                  "operator": {
+                    "type": "string",
+                    "enum": ["isNotEmpty", "isEmpty", "equals", "notEquals", "contains", "matches"],
+                    "description": "Comparison operator"
+                  },
+                  "value": {
+                    "description": "Value to compare against (for operators that need it)"
+                  }
+                },
+                "description": "Rule to evaluate"
+              }
+            }
+          },
+          "description": "Checks to evaluate"
+        },
+        
+        "scoring": {
+          "type": "object",
+          "properties": {
+            "total": {
+              "type": "number",
+              "description": "Total possible score"
+            },
+            "levels": {
+              "type": "object",
+              "properties": {
+                "gold": {
+                  "type": "number",
+                  "description": "Minimum score for gold level"
+                },
+                "silver": {
+                  "type": "number",
+                  "description": "Minimum score for silver level"
+                },
+                "bronze": {
+                  "type": "number",
+                  "description": "Minimum score for bronze level"
+                }
+              }
+            }
+          },
+          "description": "Scoring configuration"
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  
+  "additionalProperties": false
+}

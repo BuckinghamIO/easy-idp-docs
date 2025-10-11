@@ -1,0 +1,41 @@
+# yaml-language-server: $schema=https://schemas.easy-idp.com/v1/service.schema.json
+---
+apiVersion: idp.buckingham.io/v1
+kind: Service
+
+metadata:
+  name: my-api
+  labels:
+    env: production
+    language: python
+
+spec:
+  type: service
+  description: My awesome API service
+  
+  # Ownership
+  owner: MyOrg
+  teams:
+    - platform-team
+  primaryTeam: platform-team
+  
+  # Lifecycle
+  lifecycle: production
+  
+  # Source code
+  repository:
+    url: https://github.com/myorg/my-api
+    defaultBranch: main
+    private: true
+  
+  # Links
+  links:
+    dashboard: https://grafana.company.com/d/my-api
+    docs: https://docs.company.com/my-api
+  
+  # Metadata
+  tags:
+    - api
+    - rest
+  language: Python
+  framework: FastAPI

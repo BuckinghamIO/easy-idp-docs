@@ -99,6 +99,14 @@ nav:
       - Global Variables: features/global-variables.md
       - Credentials: features/credentials.md
       - Templates: features/templates.md
+  - Schema Reference:
+      - Overview: schemas/overview.md
+      - Service: schemas/service.md
+      - Team: schemas/team.md
+      - Workflow: schemas/workflow.md
+      - Scorecard: schemas/scorecard.md
+      - Examples: schemas/examples.md
+      - Versioning: schemas/versioning.md
   - API Reference:
       - Authentication: api/authentication.md
       - Workflows: api/workflows.md

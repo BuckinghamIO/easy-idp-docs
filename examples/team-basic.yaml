@@ -1,0 +1,35 @@
+# yaml-language-server: $schema=https://schemas.easy-idp.com/v1/team.schema.json
+---
+apiVersion: idp.buckingham.io/v1
+kind: Team
+
+metadata:
+  name: platform-team
+  labels:
+    department: engineering
+    function: infrastructure
+
+spec:
+  displayName: Platform Team
+  description: Platform engineering and infrastructure
+  
+  # Team members
+  members:
+    - username: sam@company.com
+      role: lead
+      since: "2024-01-15"
+    - username: jonas@company.com
+      role: member
+      since: "2024-06-01"
+  
+  # Contact information
+  contacts:
+    slack: "#team-platform"
+    email: platform@company.com
+    pagerduty: platform-team-oncall
+  
+  # Links
+  links:
+    wiki: https://wiki.company.com/teams/platform
+    jira: https://jira.company.com/browse/PLATFORM
+    calendar: https://calendar.company.com/platform
