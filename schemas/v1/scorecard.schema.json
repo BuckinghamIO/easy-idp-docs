@@ -22,14 +22,30 @@
     
     "metadata": {
       "type": "object",
-      "required": ["name"],
+      "required": ["id", "name"],
       "properties": {
-        "name": {
+        "id": {
           "type": "string",
           "pattern": "^[a-z0-9-]+$",
           "minLength": 1,
           "maxLength": 63,
-          "description": "Scorecard identifier (lowercase-with-hyphens)"
+          "description": "Unique identifier (lowercase-with-hyphens, immutable)"
+        },
+        
+        "name": {
+          "type": "string",
+          "description": "Human-readable display name"
+        },
+        
+        "description": {
+          "type": "string",
+          "description": "Brief description of what this scorecard evaluates"
+        },
+        
+        "applies_to": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Resource kinds this scorecard applies to (e.g., ['service', 'library'])"
         },
         
         "labels": {
@@ -51,57 +67,6 @@
       "type": "object",
       "required": ["checks"],
       "properties": {
-        "name": {
-          "type": "string",
-          "description": "Scorecard name (current format, matches metadata.name)"
-        },
-        
-        "version": {
-          "type": "string",
-          "description": "Scorecard version"
-        },
-        
-        "title": {
-          "type": "string",
-          "description": "Human-readable scorecard title (current format)"
-        },
-        
-        "displayName": {
-          "type": "string",
-          "description": "Human-readable scorecard name (future format)"
-        },
-        
-        "description": {
-          "type": "string",
-          "description": "Brief description of what this scorecard evaluates"
-        },
-        
-        "applies_to": {
-          "type": "array",
-          "items": {"type": "string"},
-          "description": "Resource types this scorecard applies to (current format: ['service', 'library'])"
-        },
-        
-        "appliesTo": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "required": ["kind"],
-            "properties": {
-              "kind": {
-                "type": "string",
-                "description": "Resource kind this scorecard applies to"
-              },
-              "filter": {
-                "type": "object",
-                "additionalProperties": true,
-                "description": "Optional filters to select resources"
-              }
-            }
-          },
-          "description": "Which resources this scorecard applies to (future format)"
-        },
-        
         "checks": {
           "type": "array",
           "minItems": 1,
@@ -110,11 +75,7 @@
             "properties": {
               "id": {
                 "type": "string",
-                "description": "Check identifier (current format)"
-              },
-              "name": {
-                "type": "string",
-                "description": "Check identifier (future format)"
+                "description": "Check identifier"
               },
               "title": {
                 "type": "string",
@@ -187,35 +148,7 @@
             }
           },
           "description": "Maturity levels (current format: bronze, silver, gold)"
-        },
-        
-        "scoring": {
-          "type": "object",
-          "properties": {
-            "total": {
-              "type": "number",
-              "description": "Total possible score"
-            },
-            "levels": {
-              "type": "object",
-              "properties": {
-                "gold": {
-                  "type": "number",
-                  "description": "Minimum score for gold level"
-                },
-                "silver": {
-                  "type": "number",
-                  "description": "Minimum score for silver level"
-                },
-                "bronze": {
-                  "type": "number",
-                  "description": "Minimum score for bronze level"
-                }
-              }
-            }
-          },
-          "description": "Scoring configuration (future format)"
-        }
+}
       },
       "additionalProperties": true
     }

@@ -22,14 +22,25 @@
     
     "metadata": {
       "type": "object",
-      "required": ["name"],
+      "required": ["id", "name"],
       "properties": {
-        "name": {
+        "id": {
           "type": "string",
           "pattern": "^[a-z0-9-]+$",
           "minLength": 1,
           "maxLength": 63,
-          "description": "Team identifier (lowercase-with-hyphens)"
+          "description": "Unique identifier (lowercase-with-hyphens, immutable)"
+        },
+        
+        "name": {
+          "type": "string",
+          "description": "Human-readable display name"
+        },
+        
+        "description": {
+          "type": "string",
+          "maxLength": 500,
+          "description": "Brief description of this team"
         },
         
         "labels": {
@@ -50,28 +61,6 @@
     "spec": {
       "type": "object",
       "properties": {
-        "displayName": {
-          "type": "string",
-          "description": "Human-readable team name (camelCase)"
-        },
-        
-        "display_name": {
-          "type": "string",
-          "description": "Human-readable team name (snake_case, current format)"
-        },
-        
-        "description": {
-          "type": "string",
-          "maxLength": 500,
-          "description": "Brief description of the team's purpose"
-        },
-        
-        "type": {
-          "type": "string",
-          "const": "team",
-          "description": "Resource type identifier"
-        },
-        
         "members": {
           "oneOf": [
             {

@@ -22,14 +22,24 @@
     
     "metadata": {
       "type": "object",
-      "required": ["name"],
+      "required": ["id", "name"],
       "properties": {
-        "name": {
+        "id": {
           "type": "string",
           "pattern": "^[a-z0-9-]+$",
           "minLength": 1,
           "maxLength": 63,
-          "description": "Workflow identifier (lowercase-with-hyphens)"
+          "description": "Unique identifier (lowercase-with-hyphens, immutable)"
+        },
+        
+        "name": {
+          "type": "string",
+          "description": "Human-readable display name"
+        },
+        
+        "description": {
+          "type": "string",
+          "description": "Brief description of what this workflow does"
         },
         
         "labels": {
@@ -51,26 +61,6 @@
       "type": "object",
       "required": ["steps"],
       "properties": {
-        "name": {
-          "type": "string",
-          "description": "Workflow name (current format, matches metadata.name)"
-        },
-        
-        "displayName": {
-          "type": "string",
-          "description": "Human-readable workflow name (future format)"
-        },
-        
-        "description": {
-          "type": "string",
-          "description": "Brief description of what this workflow does"
-        },
-        
-        "version": {
-          "type": "string",
-          "description": "Workflow version"
-        },
-        
         "tags": {
           "type": "array",
           "items": {"type": "string"},

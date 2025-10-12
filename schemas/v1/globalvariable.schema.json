@@ -22,14 +22,24 @@
     
     "metadata": {
       "type": "object",
-      "required": ["name"],
+      "required": ["id", "name"],
       "properties": {
-        "name": {
+        "id": {
           "type": "string",
           "pattern": "^[a-z0-9_-]+$",
           "minLength": 1,
           "maxLength": 63,
-          "description": "Variable key (e.g., github_org, cluster_ingress_ip)"
+          "description": "Unique identifier (lowercase, underscores/hyphens allowed, e.g., github_org, cluster-ingress-ip)"
+        },
+        
+        "name": {
+          "type": "string",
+          "description": "Human-readable display name"
+        },
+        
+        "description": {
+          "type": "string",
+          "description": "Brief description of what this variable is for"
         },
         
         "labels": {
@@ -51,20 +61,10 @@
       "type": "object",
       "required": ["value"],
       "properties": {
-        "key": {
-          "type": "string",
-          "description": "Variable key (current format, matches metadata.name)"
-        },
-        
         "value": {
           "type": "string",
           "description": "Variable value"
-        },
-        
-        "description": {
-          "type": "string",
-          "description": "Human-readable description of what this variable is for"
-        },
+},
         
         "secret": {
           "type": "boolean",

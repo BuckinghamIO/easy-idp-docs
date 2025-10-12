@@ -22,14 +22,24 @@
     
     "metadata": {
       "type": "object",
-      "required": ["name"],
+      "required": ["id", "name"],
       "properties": {
-        "name": {
+        "id": {
           "type": "string",
           "pattern": "^[a-z0-9-]+$",
           "minLength": 1,
           "maxLength": 63,
-          "description": "Integration identifier (e.g., github, datadog)"
+          "description": "Unique identifier (lowercase-with-hyphens, immutable, e.g., github, datadog)"
+        },
+        
+        "name": {
+          "type": "string",
+          "description": "Human-readable display name"
+        },
+        
+        "description": {
+          "type": "string",
+          "description": "Brief description of this integration"
         },
         
         "labels": {
@@ -51,11 +61,6 @@
       "type": "object",
       "required": ["type", "enabled"],
       "properties": {
-        "name": {
-          "type": "string",
-          "description": "Integration name (current format, matches metadata.name)"
-        },
-        
         "type": {
           "type": "string",
           "enum": ["github", "monitoring", "code_quality", "dns_cdn", "cicd", "secrets", "cloud", "custom"],
@@ -77,28 +82,7 @@
           "type": "object",
           "additionalProperties": {"type": "string"},
           "description": "Encrypted credentials (managed by SOPS)"
-        },
-        
-        "metadata": {
-          "type": "object",
-          "properties": {
-            "description": {
-              "type": "string",
-              "description": "Integration description"
-            },
-            "use_cases": {
-              "type": "array",
-              "items": {"type": "string"},
-              "description": "Common use cases for this integration"
-            },
-            "documentation_url": {
-              "type": "string",
-              "format": "uri",
-              "description": "Link to integration documentation"
-            }
-          },
-          "description": "Integration metadata and documentation"
-        }
+}
       },
       "additionalProperties": true
     }

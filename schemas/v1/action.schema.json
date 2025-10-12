@@ -22,14 +22,24 @@
     
     "metadata": {
       "type": "object",
-      "required": ["name"],
+      "required": ["id", "name"],
       "properties": {
-        "name": {
+        "id": {
           "type": "string",
           "pattern": "^[a-z0-9.-]+$",
           "minLength": 1,
           "maxLength": 63,
-          "description": "Action identifier (e.g., slack.notify, github.create-repo)"
+          "description": "Unique identifier (lowercase, dots allowed for namespacing, e.g., slack.notify, github.create-repo)"
+        },
+        
+        "name": {
+          "type": "string",
+          "description": "Human-readable display name"
+        },
+        
+        "description": {
+          "type": "string",
+          "description": "Brief description of what this action does"
         },
         
         "labels": {
@@ -51,21 +61,6 @@
       "type": "object",
       "required": ["type", "parameters", "implementation"],
       "properties": {
-        "name": {
-          "type": "string",
-          "description": "Action name (current format, matches metadata.name)"
-        },
-        
-        "version": {
-          "type": "string",
-          "description": "Action version"
-        },
-        
-        "description": {
-          "type": "string",
-          "description": "Brief description of what this action does"
-        },
-        
         "type": {
           "type": "string",
           "enum": ["http_wrapper", "composite", "python", "shell"],

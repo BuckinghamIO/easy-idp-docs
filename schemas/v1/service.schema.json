@@ -51,14 +51,25 @@
     
     "metadata": {
       "type": "object",
-      "required": ["name"],
+      "required": ["id", "name"],
       "properties": {
-        "name": {
+        "id": {
           "type": "string",
           "pattern": "^[a-z0-9-]+$",
           "minLength": 1,
           "maxLength": 63,
-          "description": "Service name (lowercase, hyphens only)"
+          "description": "Unique identifier (lowercase-with-hyphens, immutable)"
+        },
+        
+        "name": {
+          "type": "string",
+          "description": "Human-readable display name"
+        },
+        
+        "description": {
+          "type": "string",
+          "maxLength": 500,
+          "description": "Brief description of this service"
         },
         
         "namespace": {
@@ -90,12 +101,6 @@
           "type": "string",
           "enum": ["service", "library", "tool", "website", "infrastructure", "database", "cache"],
           "description": "Type of service"
-        },
-        
-        "description": {
-          "type": "string",
-          "maxLength": 500,
-          "description": "Brief description"
         },
         
         "owner": {
