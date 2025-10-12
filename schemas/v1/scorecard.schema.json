@@ -91,10 +91,6 @@
                 "default": 1,
                 "description": "Weight of this check in total score"
               },
-              "category": {
-                "type": "string",
-                "description": "Check category (reliability, security, documentation, etc.)"
-              },
               "check_type": {
                 "type": "string",
                 "description": "Check implementation type (http, github, metadata, link, etc.)"
