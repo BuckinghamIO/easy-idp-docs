@@ -1,0 +1,191 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schemas.easy-idp.com/v1/workflow.schema.json",
+  "title": "Workflow",
+  "description": "An automated workflow in Easy IDP",
+  "type": "object",
+  
+  "required": ["apiVersion", "kind", "metadata", "spec"],
+  
+  "properties": {
+    "apiVersion": {
+      "type": "string",
+      "enum": ["idp.buckingham.io/v1"],
+      "description": "API version of this resource"
+    },
+    
+    "kind": {
+      "type": "string",
+      "const": "Workflow",
+      "description": "Resource type"
+    },
+    
+    "metadata": {
+      "type": "object",
+      "required": ["id", "name"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9-]+$",
+          "minLength": 1,
+          "maxLength": 63,
+          "description": "Unique identifier (lowercase-with-hyphens, immutable)"
+        },
+        
+        "name": {
+          "type": "string",
+          "description": "Human-readable display name"
+        },
+        
+        "description": {
+          "type": "string",
+          "description": "Brief description of what this workflow does"
+        },
+        
+        "labels": {
+          "type": "object",
+          "additionalProperties": {"type": "string"},
+          "description": "Key-value labels for filtering"
+        },
+        
+        "annotations": {
+          "type": "object",
+          "additionalProperties": {"type": "string"},
+          "description": "Non-identifying metadata"
+        }
+      },
+      "additionalProperties": false
+    },
+    
+    "spec": {
+      "type": "object",
+      "required": ["steps"],
+      "properties": {
+        "tags": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Workflow tags for categorization"
+        },
+        
+        "form_schema": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "type"],
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Field name"
+              },
+              "label": {
+                "type": "string",
+                "description": "Human-readable label"
+              },
+              "type": {
+                "type": "string",
+                "enum": ["text", "textarea", "number", "boolean", "choice"],
+                "description": "Input type"
+              },
+              "required": {
+                "type": "boolean",
+                "default": false
+              },
+              "default": {
+                "description": "Default value"
+              },
+              "description": {
+                "type": "string",
+                "description": "Field description/help text"
+              }
+            }
+          },
+          "description": "Form fields for user input (current format)"
+        },
+        
+        "parameters": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "type"],
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Parameter name"
+              },
+              "type": {
+                "type": "string",
+                "enum": ["string", "number", "boolean", "choice", "text"],
+                "description": "Parameter type"
+              },
+              "description": {
+                "type": "string",
+                "description": "Parameter description"
+              },
+              "required": {
+                "type": "boolean",
+                "default": false,
+                "description": "Whether this parameter is required"
+              },
+              "default": {
+                "description": "Default value for optional parameters"
+              },
+              "options": {
+                "type": "array",
+                "items": {"type": "string"},
+                "description": "Available options (for type: choice)"
+              }
+            }
+          },
+          "description": "Input parameters for this workflow (future format)"
+        },
+        
+        "credential_aliases": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Required credential names"
+        },
+        
+        "steps": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["name", "action"],
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Step identifier"
+              },
+              "action": {
+                "type": "string",
+                "description": "Action to execute (e.g., git.checkout, docker.build)"
+              },
+              "config": {
+                "type": "object",
+                "additionalProperties": true,
+                "description": "Parameters for the action (current format)"
+              },
+              "with": {
+                "type": "object",
+                "additionalProperties": true,
+                "description": "Parameters for the action (future format)"
+              },
+              "register": {
+                "type": "string",
+                "description": "Variable name to store step output"
+              },
+              "condition": {
+                "type": "string",
+                "description": "Optional condition to run this step"
+              }
+            }
+          },
+          "description": "Workflow steps to execute in order"
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  
+  "additionalProperties": false
+}

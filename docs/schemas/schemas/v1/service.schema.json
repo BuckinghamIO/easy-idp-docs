@@ -1,0 +1,389 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schemas.easy-idp.com/v1/service.schema.json",
+  "title": "Service",
+  "description": "A service in the IDP catalog",
+  "type": "object",
+  
+  "required": ["apiVersion", "kind", "metadata", "spec"],
+  
+  "definitions": {
+    "repositoryString": {
+      "type": "string",
+      "format": "uri",
+      "pattern": "^https?://",
+      "description": "Git repository URL (string format)"
+    },
+    "repositoryObject": {
+      "type": "object",
+      "required": ["url"],
+      "properties": {
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "pattern": "^https?://",
+          "description": "Git repository URL"
+        },
+        "defaultBranch": {
+          "type": "string",
+          "default": "main"
+        },
+        "private": {
+          "type": "boolean",
+          "default": false
+        }
+      }
+    }
+  },
+  
+  "properties": {
+    "apiVersion": {
+      "type": "string",
+      "enum": ["idp.buckingham.io/v1"],
+      "description": "API version of this resource"
+    },
+    
+    "kind": {
+      "type": "string",
+      "const": "Service",
+      "description": "Resource type"
+    },
+    
+    "metadata": {
+      "type": "object",
+      "required": ["name"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9-]+$",
+          "minLength": 1,
+          "maxLength": 63,
+          "description": "Unique identifier (lowercase-with-hyphens, immutable) - defaults to name if not provided"
+        },
+        
+        "name": {
+          "type": "string",
+          "description": "Human-readable display name (also used as ID if not specified)"
+        },
+        
+        "description": {
+          "type": "string",
+          "maxLength": 500,
+          "description": "Brief description of this service"
+        },
+        
+        "namespace": {
+          "type": "string",
+          "default": "default",
+          "description": "Logical namespace for grouping"
+        },
+        
+        "labels": {
+          "type": "object",
+          "additionalProperties": {"type": "string"},
+          "description": "Key-value labels for filtering"
+        },
+        
+        "annotations": {
+          "type": "object",
+          "additionalProperties": {"type": "string"},
+          "description": "Non-identifying metadata"
+        }
+      },
+      "additionalProperties": false
+    },
+    
+    "spec": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["service", "library", "tool", "website", "infrastructure", "database", "cache"],
+          "description": "Type of service"
+        },
+        
+        "owner": {
+          "type": "string",
+          "description": "GitHub org or username"
+        },
+        
+        "teams": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {"type": "string"},
+              "minItems": 1,
+              "description": "Teams that own this service (simple array format)"
+            },
+            {
+              "type": "object",
+              "description": "Teams that own this service (structured format)",
+              "properties": {
+                "primary": {
+                  "type": "string",
+                  "description": "Primary team for on-call"
+                },
+                "additional": {
+                  "type": "array",
+                  "items": {"type": "string"},
+                  "description": "Additional teams with access"
+                }
+              },
+              "required": ["primary"]
+            }
+          ]
+        },
+        
+        "primaryTeam": {
+          "type": "string",
+          "description": "Primary team for on-call (defaults to first in teams array) - DEPRECATED: use teams.primary instead"
+        },
+        
+        "lifecycle": {
+          "type": "string",
+          "enum": ["development", "staging", "production", "deprecated"],
+          "default": "development",
+          "description": "Current lifecycle stage"
+        },
+        
+        "repository": {
+          "oneOf": [
+            {"$ref": "#/definitions/repositoryString"},
+            {"$ref": "#/definitions/repositoryObject"}
+          ],
+          "description": "Git repository URL (string or object format) - DEPRECATED: use sourceControl instead"
+        },
+        
+        "sourceControl": {
+          "type": "object",
+          "description": "Source control configuration",
+          "required": ["integration", "repository"],
+          "properties": {
+            "integration": {
+              "type": "string",
+              "enum": ["github", "gitlab", "bitbucket"],
+              "description": "Source control platform"
+            },
+            "repository": {
+              "type": "string",
+              "format": "uri",
+              "description": "Repository URL"
+            },
+            "branch": {
+              "type": "string",
+              "default": "main",
+              "description": "Default branch"
+            }
+          }
+        },
+        
+        "artifacts": {
+          "type": "array",
+          "description": "Deployment artifacts (container images, packages, etc.)",
+          "items": {
+            "type": "object",
+            "required": ["integration", "repository"],
+            "properties": {
+              "integration": {
+                "type": "string",
+                "enum": ["docker", "ghcr", "quay", "ecr", "gcr"],
+                "description": "Container registry type"
+              },
+              "repository": {
+                "type": "string",
+                "description": "Container repository (e.g., docker.io/org/image)"
+              },
+              "environments": {
+                "type": "object",
+                "description": "Environment-specific tag selection rules",
+                "additionalProperties": {
+                  "type": "object",
+                  "properties": {
+                    "selector": {
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "enum": ["regex", "semver", "latest"],
+                          "description": "Tag selection strategy"
+                        },
+                        "pattern": {
+                          "type": "string",
+                          "description": "Regex pattern for tag matching"
+                        },
+                        "orderBy": {
+                          "type": "string",
+                          "description": "Field to order by (from regex capture groups)"
+                        },
+                        "order": {
+                          "type": "string",
+                          "enum": ["asc", "desc"],
+                          "description": "Sort order"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        
+        "integrations": {
+          "type": "object",
+          "description": "Optional platform integrations",
+          "properties": {
+            "monitoring": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["integration"],
+                "properties": {
+                  "integration": {
+                    "type": "string",
+                    "description": "Monitoring platform (datadog, prometheus, grafana, etc.)"
+                  }
+                },
+                "additionalProperties": true
+              }
+            },
+            "infrastructure": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["integration"],
+                "properties": {
+                  "integration": {
+                    "type": "string",
+                    "description": "Infrastructure platform (kubernetes, aws, gcp, terraform, etc.)"
+                  }
+                },
+                "additionalProperties": true
+              }
+            },
+            "cicd": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["integration"],
+                "properties": {
+                  "integration": {
+                    "type": "string",
+                    "description": "CI/CD platform (github-actions, gitlab-ci, jenkins, etc.)"
+                  }
+                },
+                "additionalProperties": true
+              }
+            }
+          },
+          "additionalProperties": true
+        },
+        
+        "metadata": {
+          "type": "object",
+          "description": "Repository metadata from GitHub/GitLab",
+          "properties": {
+            "language": {
+              "type": "string",
+              "description": "Primary programming language"
+            },
+            "topics": {
+              "type": "array",
+              "items": {"type": "string"},
+              "description": "Repository topics/tags"
+            },
+            "private": {
+              "type": "boolean",
+              "description": "Whether repository is private"
+            },
+            "clone_url": {
+              "type": "string",
+              "format": "uri",
+              "description": "HTTPS clone URL"
+            },
+            "ssh_url": {
+              "type": "string",
+              "description": "SSH clone URL"
+            },
+            "default_branch": {
+              "type": "string",
+              "description": "Default branch name"
+            }
+          }
+        },
+        
+        "dependencies": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Dependencies on other services (simple string array)"
+        },
+        
+        "dependsOn": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["kind", "name"],
+            "properties": {
+              "kind": {"type": "string"},
+              "name": {"type": "string"},
+              "namespace": {"type": "string"}
+            }
+          },
+          "description": "Dependencies on other resources (structured format)"
+        },
+        
+        "links": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Links to external resources (dashboard, docs, runbook, etc.)"
+        },
+        
+        "slos": {
+          "type": "object",
+          "description": "Service Level Objectives",
+          "properties": {
+            "availability": {
+              "type": "string",
+              "description": "Target availability (e.g., 99.9%)"
+            },
+            "latency_p95": {
+              "type": "string",
+              "description": "95th percentile latency target (e.g., 200ms)"
+            },
+            "latency_p99": {
+              "type": "string",
+              "description": "99th percentile latency target"
+            },
+            "error_rate": {
+              "type": "string",
+              "description": "Maximum error rate (e.g., 0.1%)"
+            }
+          },
+          "additionalProperties": true
+        },
+        
+        "tags": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Searchable tags"
+        },
+        
+        "team": {
+          "type": "string",
+          "description": "Primary team (single team, legacy format)"
+        },
+        
+        "primary_team": {
+          "type": "string",
+          "description": "Primary team for on-call (snake_case, current format)"
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  
+  "additionalProperties": false
+}
